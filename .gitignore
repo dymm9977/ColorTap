@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+venv/
+.venv/
+
+# Node.js
+node_modules/
+dist/
+*.log
+
+# Output files
+output/
+
+# OS
+.DS_Store
+Thumbs.db

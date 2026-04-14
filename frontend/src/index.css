@@ -1,0 +1,317 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/**
+ * 全局设色：缟素笺纸、浓墨、朱砂、黛青、泥金。
+ * 与 tailwind theme `jian.*` 保持一致，便于在任意 CSS 中引用。
+ */
+:root {
+  --jian-paper: #f3efe4;
+  --jian-paper-warm: #ebe4d6;
+  --jian-ink: #2a2622;
+  --jian-ink-soft: #4a4238;
+  --jian-cinnabar: #b43c2b;
+  --jian-cinnabar-deep: #8b2e22;
+  --jian-teal: #3a5552;
+  --jian-gold: #b08d3a;
+  --jian-line: rgba(42, 38, 34, 0.1);
+}
+
+@layer base {
+  body {
+    @apply antialiased text-jian-ink bg-jian-paper font-serif;
+    /* 纸本颗粒 */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.055'/%3E%3C/svg%3E");
+  }
+}
+
+/**
+ * 卷轴页：上下略深、中间留白，仿旧纸托色。
+ */
+@layer components {
+  .xuan-page {
+    background: linear-gradient(
+      180deg,
+      rgba(235, 228, 216, 0.65) 0%,
+      var(--jian-paper) 14%,
+      var(--jian-paper) 86%,
+      rgba(235, 228, 216, 0.55) 100%
+    );
+  }
+
+  /**
+   * 笺纸卡片：外框 + 内泥金线，略浮于纸面。
+   */
+  .scroll-card {
+    @apply relative rounded-sm border border-jian-line/90 bg-white/75 backdrop-blur-[2px] shadow-scroll-soft;
+    box-shadow:
+      0 10px 36px -14px rgba(42, 38, 34, 0.12),
+      inset 0 1px 0 rgba(255, 253, 248, 0.9);
+  }
+
+  .scroll-card::before {
+    content: "";
+    position: absolute;
+    inset: 5px;
+    border: 1px solid rgba(176, 141, 58, 0.22);
+    border-radius: 1px;
+    pointer-events: none;
+  }
+
+  /** 栏题下短装饰：如印押下一道细金线 */
+  .heading-rule {
+    @apply flex items-center justify-center gap-3 text-jian-gold/90;
+  }
+
+  .heading-rule::before,
+  .heading-rule::after {
+    content: "";
+    @apply h-px w-10 bg-gradient-to-r from-transparent via-jian-gold/70 to-transparent;
+  }
+
+  /**
+   * 色卡背面滚动：仅在内容溢出时出现；细窄、低对比。
+   * 不用 scrollbar-gutter: stable，避免未溢出时也留出「轨缝」显得像有 bug。
+   */
+  .flip-card-scroll {
+    scrollbar-gutter: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(176, 141, 58, 0.45) transparent;
+  }
+
+  .flip-card-scroll::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  .flip-card-scroll::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, rgba(176, 141, 58, 0.55), rgba(176, 141, 58, 0.25));
+    border-radius: 999px;
+  }
+
+  .flip-card-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+/* 水墨晕染 blob（旧版全屏层已移除；保留类名供需要复用时使用 --ink-accent） */
+@layer utilities {
+  .ink-blob {
+    filter: blur(52px);
+    will-change: transform, opacity;
+  }
+
+  .ink-blob-a {
+    background: radial-gradient(ellipse 85% 75% at 38% 32%, var(--ink-accent), transparent 58%);
+    animation: ink-drift-a 11s ease-in-out infinite;
+  }
+
+  .ink-blob-b {
+    background: radial-gradient(ellipse 90% 80% at 72% 68%, var(--ink-accent), transparent 60%);
+    animation: ink-drift-b 13s ease-in-out infinite;
+    animation-delay: -2s;
+  }
+
+  .ink-blob-c {
+    background: radial-gradient(circle at 50% 50%, rgba(250, 250, 248, 0.35) 0%, var(--ink-accent) 42%, transparent 68%);
+    animation: ink-drift-c 9s ease-in-out infinite;
+    animation-delay: -4s;
+  }
+}
+
+@keyframes ink-drift-a {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.48;
+  }
+  50% {
+    transform: translate(10%, -7%) scale(1.1);
+    opacity: 0.72;
+  }
+}
+
+@keyframes ink-drift-b {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1.02);
+    opacity: 0.42;
+  }
+  50% {
+    transform: translate(-12%, 8%) scale(1.06);
+    opacity: 0.68;
+  }
+}
+
+@keyframes ink-drift-c {
+  0%,
+  100% {
+    transform: translate(-5%, 4%) scale(1);
+    opacity: 0.38;
+  }
+  50% {
+    transform: translate(6%, -6%) scale(1.14);
+    opacity: 0.62;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ink-blob-a,
+  .ink-blob-b,
+  .ink-blob-c {
+    animation: none !important;
+  }
+
+  .ink-bloom-root .ink-bloom-layer,
+  .ink-bloom-root .ink-bloom-ripple,
+  .ink-bloom-root .ink-bloom-inkwash {
+    animation: none !important;
+  }
+}
+
+/**
+ * 点睛框内专用：三色矿物晕 + 水墨波纹绽开（变量 --ink-accent / --ink-s0~2 由 InkBloomPanel 注入）
+ */
+.ink-bloom-root .ink-bloom-layer {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(22px);
+  will-change: transform, opacity;
+}
+
+.ink-bloom-root .ink-bloom-a {
+  width: 92%;
+  height: 88%;
+  left: -14%;
+  top: -8%;
+  background: radial-gradient(ellipse 82% 78% at 38% 36%, var(--ink-s0), transparent 60%);
+  opacity: 0.52;
+  mix-blend-mode: multiply;
+  animation: ink-bloom-panel-a 5s ease-in-out infinite;
+}
+
+.ink-bloom-root .ink-bloom-b {
+  width: 88%;
+  height: 85%;
+  right: -16%;
+  bottom: -6%;
+  background: radial-gradient(ellipse 85% 80% at 68% 64%, var(--ink-s1), transparent 62%);
+  opacity: 0.48;
+  mix-blend-mode: multiply;
+  animation: ink-bloom-panel-b 5.5s ease-in-out infinite;
+  animation-delay: -1.2s;
+}
+
+.ink-bloom-root .ink-bloom-c {
+  width: 75%;
+  height: 72%;
+  left: 50%;
+  top: 44%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    circle at 50% 48%,
+    rgba(250, 248, 242, 0.5) 0%,
+    var(--ink-s2) 38%,
+    transparent 68%
+  );
+  opacity: 0.38;
+  mix-blend-mode: multiply;
+  animation: ink-bloom-panel-c 4.2s ease-in-out infinite;
+  animation-delay: -2s;
+}
+
+.ink-bloom-root .ink-bloom-ripple {
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  width: min(48%, 180px);
+  height: min(48%, 180px);
+  border-radius: 50%;
+  border: 1px solid rgba(42, 38, 34, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(255, 253, 248, 0.12);
+  background: radial-gradient(
+    circle,
+    transparent 46%,
+    rgba(42, 38, 34, 0.06) 48%,
+    transparent 62%
+  );
+  animation: ink-bloom-ripple-out 2.7s ease-out infinite;
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+.ink-bloom-root .ink-bloom-ripple-2 {
+  animation-delay: 1.35s;
+  top: 46%;
+  width: min(40%, 150px);
+  height: min(40%, 150px);
+}
+
+.ink-bloom-root .ink-bloom-inkwash {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 110% 85% at 50% 48%, transparent 32%, rgba(42, 38, 34, 0.09) 52%, transparent 72%);
+  animation: ink-bloom-wash-pulse 3s ease-in-out infinite;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+@keyframes ink-bloom-panel-a {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.48;
+  }
+  50% {
+    transform: translate(6%, -5%) scale(1.12);
+    opacity: 0.68;
+  }
+}
+
+@keyframes ink-bloom-panel-b {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1.03);
+    opacity: 0.42;
+  }
+  50% {
+    transform: translate(-7%, 6%) scale(1.08);
+    opacity: 0.62;
+  }
+}
+
+@keyframes ink-bloom-panel-c {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.34;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.18);
+    opacity: 0.52;
+  }
+}
+
+@keyframes ink-bloom-ripple-out {
+  0% {
+    transform: translate(-50%, -50%) scale(0.2);
+    opacity: 0.65;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2.15);
+    opacity: 0;
+  }
+}
+
+@keyframes ink-bloom-wash-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.88;
+    transform: scale(1.05);
+  }
+}

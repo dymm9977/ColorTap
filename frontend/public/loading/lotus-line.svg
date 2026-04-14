@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 280" fill="none" aria-hidden="true">
+  <path opacity=".38" stroke="#b4533c" stroke-width="1.2" d="M200 200c-30-60 0-100 0-120"/>
+  <path opacity=".32" stroke="#2F6B5A" stroke-width="1" d="M200 95c-35 20-55 55-55 85M200 95c35 20 55 55 55 85"/>
+  <ellipse opacity=".22" cx="200" cy="175" rx="70" ry="22" stroke="#2B5F8F" stroke-width="1"/>
+</svg>
